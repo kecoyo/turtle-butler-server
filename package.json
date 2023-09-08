@@ -12,7 +12,7 @@
     "debug": "egg-bin debug",
     "dev": "egg-bin dev",
     "lint": "eslint .",
-    "start": "egg-scripts start --port 7010 --title=turtle-open",
+    "start": "egg-scripts start --port 7011 --title=turtle-open",
     "start-daemon": "egg-scripts start --daemon --title=turtle-open",
     "stop": "egg-scripts stop --title=turtle-open",
     "test": "npm run lint -- --fix && npm run test-local",

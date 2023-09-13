@@ -1,6 +1,7 @@
 import { Service } from 'egg';
 import _ from 'lodash';
-import { col, fn } from 'sequelize';
+import { InferAttributes, InferCreationAttributes, col, fn } from 'sequelize';
+import { CategoryModel } from '../model/category';
 
 export default class CategoryService extends Service {
   /**
@@ -33,7 +34,7 @@ export default class CategoryService extends Service {
 
   /**
    * 获取账号分类信息
-   * @param id
+   * @param id 账号分类ID
    * @returns
    */
   async getCategoryInfo(id: number) {
@@ -49,10 +50,10 @@ export default class CategoryService extends Service {
 
   /**
    * 创建账号分类
-   * @param payload
+   * @param payload 账号分类属性
    * @returns
    */
-  async createCategory(payload) {
+  async createCategory(payload: InferCreationAttributes<CategoryModel>) {
     const { ctx } = this;
     const { user } = ctx.state;
     const { name, icon } = payload;
@@ -63,21 +64,21 @@ export default class CategoryService extends Service {
 
   /**
    * 修改账号分类
-   * @param payload
+   * @param payload 账号分类属性
    * @returns
    */
-  async updateCategory(payload) {
+  async updateCategory(payload: InferAttributes<CategoryModel>) {
     const { ctx } = this;
     const { user } = ctx.state;
-    const { id, name, icon } = payload;
+    const { id, ...values } = payload;
 
-    const [affectedCount] = await ctx.model.Category.update({ name, icon }, { where: { id, userId: user.id } });
+    const [affectedCount] = await ctx.model.Category.update(values, { where: { id, userId: user.id } });
     return affectedCount;
   }
 
   /**
    * 删除账号分类
-   * @param id
+   * @param id 账号分类ID
    * @returns
    */
   async deleteCategory(id: number) {
@@ -90,16 +91,17 @@ export default class CategoryService extends Service {
 
   /**
    * 排序账号分类
-   * @param ids
+   * @param ids 排序账号分类id数组
    * @returns
    */
-  async sort(ids: number[]) {
+  async sortCategory(ids: number[]) {
     const { ctx } = this;
+    const { user } = ctx.state;
 
     let ret = 0;
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
-      const [affectedCount = 0] = await ctx.model.Category.update({ sort: i + 1 }, { where: { id } });
+      const [affectedCount = 0] = await ctx.model.Category.update({ sort: i + 1 }, { where: { id, userId: user.id } });
       ret += affectedCount;
     }
     return ret;

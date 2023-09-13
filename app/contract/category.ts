@@ -54,7 +54,7 @@ export const deleteCategoryResponse = {
 
 // sort
 export const sortCategoryRequest = {
-  ids: { type: 'array', itemType: 'number' },
+  ids: { type: 'array', itemType: 'number', description: '分类ID数组' },
 };
 export const sortCategoryResponse = {
   ...baseResponse,

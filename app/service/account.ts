@@ -1,8 +1,11 @@
 import { Service } from 'egg';
+import { InferAttributes, InferCreationAttributes } from 'sequelize';
+import { AccountModel } from '../model/account';
 
 export default class AccountService extends Service {
   /**
    * 获取账号列表
+   * @param categoryId 账号分类ID
    * @returns
    */
   async getAccountList(categoryId: number) {
@@ -11,7 +14,7 @@ export default class AccountService extends Service {
 
     const list = await ctx.model.Account.findAll({
       attributes: ['id', 'name', 'icon', 'properties', 'pictures', 'remark'],
-      where: { userId: user.id, categoryId },
+      where: { categoryId, userId: user.id },
     });
 
     return list;
@@ -19,7 +22,7 @@ export default class AccountService extends Service {
 
   /**
    * 获取账号信息
-   * @param id
+   * @param id 账号ID
    * @returns
    */
   async getAccountInfo(id: number) {
@@ -28,12 +31,17 @@ export default class AccountService extends Service {
 
     const info = await ctx.model.Account.findOne({
       attributes: ['id', 'name', 'icon', 'properties', 'pictures', 'remark'],
-      where: { userId: user.id, id },
+      where: { id, userId: user.id },
     });
     return info;
   }
 
-  async createAccount(payload) {
+  /**
+   * 创建账号
+   * @param payload 账号属性
+   * @returns
+   */
+  async createAccount(payload: InferCreationAttributes<AccountModel>) {
     const { ctx } = this;
     const { user } = ctx.state;
     const { categoryId, name, icon, properties, pictures, remark } = payload;
@@ -41,27 +49,48 @@ export default class AccountService extends Service {
     return account;
   }
 
-  async update(id, payload) {
+  /**
+   * 修改账号
+   * @param payload 账号属性
+   * @returns
+   */
+  async updateAccount(payload: InferAttributes<AccountModel>) {
     const { ctx } = this;
-    const account = await ctx.model.Account.findByPk(id);
-    if (!account) {
-      throw ctx.createError(404, 'account not found');
-    }
-    let ret = await ctx.model.Account.update(payload, { where: { id } });
-    return ret;
+    const { user } = ctx.state;
+    const { id, ...values } = payload;
+
+    const [affectedCount] = await ctx.model.Account.update(values, { where: { id, userId: user.id } });
+    return affectedCount;
   }
 
-  async delete(id) {
+  /**
+   * 删除账号
+   * @param id 账号ID
+   * @returns
+   */
+  async deleteAccount(id) {
     const { ctx } = this;
-    const account = await ctx.model.Account.findByPk(id);
-    if (!account) {
-      throw ctx.createError(404, 'account not found');
-    }
-    let ret = await ctx.model.Account.destroy({ where: { id } });
-    return ret;
+    const { user } = ctx.state;
+
+    let affectedCount = await ctx.model.Account.destroy({ where: { id, userId: user.id } });
+    return affectedCount;
   }
 
-  sortAccount(ids: any) {
-    throw new Error('Method not implemented.');
+  /**
+   * 排序账号
+   * @param ids 排序的账号id数组
+   * @returns 返回影响的行数
+   */
+  async sortAccount(ids: number[]) {
+    const { ctx } = this;
+    const { user } = ctx.state;
+
+    let ret = 0;
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      const [affectedCount = 0] = await ctx.model.Account.update({ sort: i + 1 }, { where: { id, userId: user.id } });
+      ret += affectedCount;
+    }
+    return ret;
   }
 }

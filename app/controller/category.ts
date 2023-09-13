@@ -92,18 +92,18 @@ export default class CategoryController extends Controller {
   /**
    * @summary 排序账号分类
    * @description
-   * @router POST /category/sort
+   * @router POST /category/sortCategory
    * @apikey
    * @request body sortCategoryRequest *body
    * @response 200 sortCategoryResponse 保存成功
    */
-  async sort() {
+  async sortCategory() {
     const { ctx, service } = this;
 
     ctx.validate(ctx.rule.sortCategoryRequest);
 
     const { ids } = ctx.request.body;
-    const ret = await service.category.sort(ids);
+    const ret = await service.category.sortCategory(ids);
     ctx.success(ret);
   }
 }

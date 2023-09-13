@@ -71,8 +71,8 @@ export default class AccountController extends Controller {
 
     ctx.validate(ctx.rule.updateAccountRequest);
 
-    const { id, ...payload } = ctx.request.body;
-    const affectedRows = await service.account.update(id, payload);
+    const payload = ctx.request.body;
+    const affectedRows = await service.account.updateAccount(payload);
     ctx.success(affectedRows);
   }
 
@@ -90,7 +90,7 @@ export default class AccountController extends Controller {
     ctx.validate(ctx.rule.deleteAccountRequest);
 
     const { id } = ctx.request.body;
-    const affectedRows = await service.account.delete(id);
+    const affectedRows = await service.account.deleteAccount(id);
     ctx.success(affectedRows);
   }
 

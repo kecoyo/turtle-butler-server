@@ -111,4 +111,22 @@ export default class AccountController extends Controller {
     const ret = await service.account.sortAccount(ids);
     ctx.success(ret);
   }
+
+  /**
+   * @summary 移动账号
+   * @description
+   * @router POST /account/moveAccount
+   * @apikey
+   * @request body moveAccountRequest *body
+   * @response 200 moveAccountResponse 保存成功
+   */
+  async moveAccount() {
+    const { ctx, service } = this;
+
+    ctx.validate(ctx.rule.moveAccountRequest);
+
+    const { id, categoryId } = ctx.request.body;
+    const ret = await service.account.moveAccount(id, categoryId);
+    ctx.success(ret);
+  }
 }

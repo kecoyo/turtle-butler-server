@@ -25,7 +25,7 @@ export const getAccountInfoResponse = {
   data: { type: 'Account', description: '账号信息' },
 };
 
-// create
+// createAccount
 export const createAccountRequest = {
   name: { type: 'string', required: true, description: '分类名称' },
   icon: { type: 'string', required: true, description: '分类图标' },
@@ -48,7 +48,7 @@ export const updateAccountResponse = {
   data: { type: 'number', description: '影响的行数' },
 };
 
-// delete
+// deleteAccount
 export const deleteAccountRequest = {
   id: { type: 'number', required: true, description: '分类ID' },
 };
@@ -57,11 +57,21 @@ export const deleteAccountResponse = {
   data: { type: 'number', description: '影响的行数' },
 };
 
-// sort
+// sortAccount
 export const sortAccountRequest = {
   ids: { type: 'array', itemType: 'number' },
 };
 export const sortAccountResponse = {
+  ...baseResponse,
+  data: { type: 'number', description: '影响的行数' },
+};
+
+// moveAccount
+export const moveAccountRequest = {
+  id: { type: 'number', required: true, description: '移动的账号id' },
+  categoryId: { type: 'number', required: true, description: '目标分类id' },
+};
+export const moveAccountResponse = {
   ...baseResponse,
   data: { type: 'number', description: '影响的行数' },
 };

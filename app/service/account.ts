@@ -93,4 +93,25 @@ export default class AccountService extends Service {
     }
     return ret;
   }
+
+  /**
+   * 移动账号
+   * @param id 要移动的账号id
+   * @param categoryId 目标分类id
+   * @returns 返回影响的行数
+   */
+  async moveAccount(id: number, categoryId: number) {
+    const { ctx } = this;
+    const { user } = ctx.state;
+
+    // 验证分类是否存在
+    const categoryInfo = await ctx.model.Category.findOne({ where: { id: categoryId, userId: user.id } });
+    if (!categoryInfo) {
+      throw ctx.createError(404, 'categoryInfo not found');
+    }
+
+    // 修改分类ID
+    const [affectedCount = 0] = await ctx.model.Account.update({ categoryId }, { where: { id, userId: user.id } });
+    return affectedCount;
+  }
 }

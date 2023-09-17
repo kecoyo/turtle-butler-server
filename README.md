@@ -1,4 +1,4 @@
-# turtle-open
+# turtle-butler-server
 
 egg simple project
 
